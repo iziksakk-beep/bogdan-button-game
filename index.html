@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Кнопочка Богдана | Играй онлайн бесплатно</title>
+    <meta name="description" content="Бесплатная онлайн игра 'Кнопочка Богдана'. Тапай, прокачивай авто-Богдана, соревнуйся с друзьями!">
+    <meta name="keywords" content="игра, онлайн, тапать, Богдан, кликер, прокачка, бесплатно">
+    <meta property="og:title" content="Кнопочка Богдана - Онлайн игра">
+    <meta property="og:description" content="Тапай по Богдану и становись самым сильным!">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://i.imgur.com/placeholder.png">
+    <style>
+        /* Сброс и базовые стили */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0c2461, #1e3799, #4a69bd);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            overflow-x: hidden;
+        }
+
+        /* Шапка сайта */
+        .site-header {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 3px solid #f6b93b;
+            box-shadow: 0 0 30px rgba(246, 185, 59, 0.4);
+        }
+
+        .site-title {
+            font-size: 2.8rem;
+            color: #f6b93b;
+            text-shadow: 0 0 15px #f6b93b;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .site-subtitle {
+            font-size: 1.1rem;
+            color: #82ccdd;
+            margin-bottom: 15px;
+        }
+
+        /* Основной контейнер игры */
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 3px solid #78e08f;
+            box-shadow: 0 0 30px rgba(120, 224, 143, 0.3);
+        }
+
+        /* Навигация */
+        .game-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background: linear-gradient(45deg, #4a69bd, #1e3799);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 150px;
+            max-width: 200px;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(45deg, #f6b93b, #e55039);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 80, 57, 0.4);
+        }
+
+        /* Игровые вкладки */
+        .game-tab {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .game-tab.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Главный игровой экран */
+        .main-game {
+            text-align: center;
+        }
+
+        .score-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 2px solid #82ccdd;
+        }
+
+        .score-label {
+            font-size: 1.3rem;
+            color: #82ccdd;
+            margin-bottom: 10px;
+        }
+
+        #totalScore {
+            font-size: 4.5rem;
+            font-weight: bold;
+            color: #f6b93b;
+            text-shadow: 0 0 20px #f6b93b;
+            font-family: 'Courier New', monospace;
+        }
+
+        .multiplier-display {
+            font-size: 1.2rem;
+            color: #78e08f;
+            margin-top: 10px;
+        }
+
+        /* Кнопка Богдана */
+        .bogdan-btn-container {
+            margin: 30px 0;
+            padding: 20px;
+        }
+
+        #bogdanButton {
+            width: 280px;
+            height: 280px;
+            background: radial-gradient(circle at 30% 30%, #e55039, #b71540);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s;
+            box-shadow: 
+                0 0 80px #e55039,
+                inset 0 10px 40px rgba(255, 255, 255, 0.3),
+                inset 0 -10px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        #bogdanButton:active {
+            transform: scale(0.95);
+            box-shadow: 
+                0 0 40px #e55039,
+                inset 0 5px 20px rgba(255, 255, 255, 0.2),
+                inset 0 -5px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        #bogdanButton::after {
+            content: 'БОГДАН';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+            letter-spacing: 4px;
+        }
+
+        /* Статистика */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #f6b93b;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #82ccdd;
+        }
+
+        /* Вкладка прокачки */
+        .upgrades-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .upgrade-card {
+            background: linear-gradient(135deg, rgba(120, 224, 143, 0.2), rgba(74, 105, 189, 0.2));
+            border: 2px solid #78e08f;
+            border-radius: 20px;
+            padding: 20px;
+            transition: transform 0.3s;
+        }
+
+        .upgrade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(120, 224, 143, 0.3);
+        }
+
+        .upgrade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .upgrade-name {
+            font-size: 1.4rem;
+            color: #f6b93b;
+            font-weight: bold;
+        }
+
+        .upgrade-level {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            color: #78e08f;
+        }
+
+        .upgrade-description {
+            color: #dcdde1;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .upgrade-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #82ccdd;
+            font-size: 0.95rem;
+        }
+
+        .upgrade-cost {
+            text-align: center;
+            font-size: 1.4rem;
+            color: #e55039;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .buy-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #f6b93b, #e55039);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .buy-btn:hover:not(:disabled) {
+            background: linear-gradient(45deg, #e55039, #f6b93b);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 80, 57, 0.4);
+        }
+
+        .buy-btn:disabled {
+            background: #636e72;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Вкладка "Об игре" */
+        .about-content {
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .about-content h3 {
+            color: #f6b93b;
+            margin: 20px 0 10px;
+            font-size: 1.5rem;
+        }
+
+        .about-content p {
+            margin-bottom: 15px;
+            color: #dcdde1;
+        }
+
+        .features-list {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .features-list li {
+            margin-bottom: 10px;
+            padding-left: 25px;
+            position: relative;
+            color: #82ccdd;
+        }
+
+        .features-list li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #78e08f;
+            font-weight: bold;
+        }
+
+        /* Футер */
+        .site-footer {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            color: #82ccdd;
+            font-size: 0.9rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .share-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .share-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .share-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .site-title { font-size: 2rem; }
+            #bogdanButton { width: 220px; height: 220px; }
+            #bogdanButton::after { font-size: 2.2rem; }
+            #totalScore { font-size: 3.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-btn { min-width: 120px; padding: 10px; }
+        }
+
+        /* Анимация тапа */
+        @keyframes tapAnimation {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .tap-animation {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(246, 185, 59, 0.8), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: tapAnimation 0.6s ease-out;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="site-header">
+        <h1 class="site-title">🎮 КНОПОЧКА БОГДАНА</h1>
+        <p class="site-subtitle">Бесплатная онлайн игра | Играй прямо в браузере!</p>
+        <div class="share-buttons">
+            <button class="share-btn" onclick="shareGame()">📢 Поделиться игрой</button>
+            <button class="share-btn" onclick="copyLink()">🔗 Копировать ссылку</button>
+        </div>
+    </header>
+
+    <!-- Основной контейнер игры -->
+    <main class="game-container">
+        <!-- Навигация -->
+        <nav class="game-nav">
+            <button class="nav-btn active" data-tab="play">🎮 Играть</button>
+            <button class="nav-btn" data-tab="upgrades">⚡ Прокачка</button>
+            <button class="nav-btn" data-tab="about">📖 Об игре</button>
+        </nav>
+
+        <!-- Вкладка ИГРАТЬ -->
+        <section id="play" class="game-tab active">
+            <div class="main-game">
+                <div class="score-container">
+                    <div class="score-label">СИЛА БОГДАНА</div>
+                    <div id="totalScore">0</div>
+                    <div class="multiplier-display">Множитель силы: <span id="multiplierDisplay">x1.0</span></div>
+                </div>
+
+                <div class="bogdan-btn-container">
+                    <button id="bogdanButton" aria-label="Кнопка Богдана"></button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div id="clicksPerSec" class="stat-value">0</div>
+                        <div class="stat-label">Тапов/сек</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="autoClicks" class="stat-value">0/сек</div>
+                        <div class="stat-label">Авто-Богдан</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="gameTime" class="stat-value">0с</div>
+                        <div class="stat-label">Время игры</div>
+                    </div>
+                    <div class="stat-card">
+                        <div id="availablePoints" class="stat-value">0</div>
+                        <div class="stat-label">Для прокачки</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Вкладка ПРОКАЧКА -->
+        <section id="upgrades" class="game-tab">
+            <div class="upgrades-list">
+                <!-- Авто-Богдан -->
+                <div class="upgrade-card">
+                    <div class="upgrade-header">
+                        <div class="upgrade-name">🤖 Авто-Богдан</div>
+                        <div class="upgrade-level">Ур. <span id="autoLevel">1</span>/1000</div>
+                    </div>
+                    <div class="upgrade-description">
+                        Богдан работает сам! Увеличивает скорость и силу автоматических тапов.
+                    </div>
+                    <div class="upgrade-stats">
+                        <div>Скорость: <span id="autoSpeed">1.0</span>/сек</div>
+                        <div>Сила: <span id="autoPower">1.0</span>x</div>
+                    </div>
+                    <div class="upgrade-cost">Стоимость: <span id="autoCost">100</span></div>
+                    <button class="buy-btn" id="buyAuto">КУПИТЬ УЛУЧШЕНИЕ</button>
+                </div>
+
+                <!-- Множитель силы -->
+                <div class="upgrade-card">
+                    <div class="upgrade-header">
+                        <div class="upgrade-name">⚡ Множитель силы</div>
+                        <div class="upgrade-level">Ур. <span id="multiLevel">1</span>/1000</div>
+                    </div>
+                    <div class="upgrade-description">
+                        Увеличивает мощь каждого тапа. Каждый уровень добавляет +0.1 к множителю.
+                    </div>
+                    <div class="upgrade-stats">
+                        <div>Текущий: <span id="currentMulti">1.0</span>x</div>
+                        <div>Следующий: <span id="nextMulti">1.1</span>x</div>
+                    </div>
+                    <div class="upgrade-cost">Стоимость: <span id="multiCost">50</span></div>
+                    <button class="buy-btn" id="buyMulti">КУПИТЬ УЛУЧШЕНИЕ</button>
+                </div>
+
+                <!-- Удвоитель -->
+                <div class="upgrade-card">
+                    <div class="upgrade-header">
+                        <div class="upgrade-name">🎯 Удвоитель</div>
+                        <div class="upgrade-level">Ур. <span id="doubleLevel">1</span>/500</div>
+                    </div>
+                    <div class="upgrade-description">
+                        Шанс получить x2 очков за тап. Каждый уровень увеличивает шанс на 0.2%.
+                    </div>
+                    <div class="upgrade-stats">
+                        <div>Шанс: <span id="doubleChance">0.2</span>%</div>
+                        <div>Множитель: 2x</div>
+                    </div>
+                    <div class="upgrade-cost">Стоимость: <span id="doubleCost">200</span></div>
+                    <button class="buy-btn" id="buyDouble">КУПИТЬ УЛУЧШЕНИЕ</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Вкладка ОБ ИГРЕ -->
+        <section id="about" class="game-tab">
+            <div class="about-content">
+                <h3>🎮 Добро пожаловать в "Кнопочку Богдана"!</h3>
+                <p>Это бесплатная онлайн игра, в которую можно играть прямо в браузере. Не нужно ничего скачивать или устанавливать!</p>
+                
+                <h3>📱 Как играть?</h3>
+                <p>1. Тапайте (нажимайте) по кнопке Богдана<br>
+                2. Зарабатывайте очки силы<br>
+                3. Переходите во вкладку "Прокачка"<br>
+                4. Улучшайте авто-Богдана и множители<br>
+                5. Становитесь самым сильным!</p>
+                
+                <h3>🌟 Особенности игры:</h3>
+                <ul class="features-list">
+                    <li>Полностью бесплатно, без регистрации</li>
+                    <li>Работает на любом устройстве (телефон, планшет, компьютер)</li>
+                    <li>Автосохранение прогресса</li>
+                    <li>3 вида улучшений с 1000+ уровней</li>
+                    <li>Красивые визуальные эффекты</li>
+                    <li>Можно играть офлайн после загрузки</li>
+                </ul>
+                
+                <h3>🔗 Поделитесь с друзьями!</h3>
+                <p>Просто отправьте им ссылку на эту страницу. Игра запускается мгновенно в любом браузере.</p>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="buy-btn" onclick="window.location.reload()" style="max-width: 300px;">
+                        🔄 Начать новую игру
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подвал сайта -->
+    <footer class="site-footer">
+        <p>🎮 "Кнопочка Богдана" | Онлайн игра | © 2024</p>
+        <p>Игра сохраняется автоматически в вашем браузере</p>
+        <p id="playerCount">Сейчас играют: Загрузка...</p>
+        <p>Ссылка на игру: <span id="gameLink">...</span></p>
+    </footer>
+
+    <script>
+        // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
+        let gameState = {
+            totalScore: 0,
+            availablePoints: 0,
+            multiplier: 1.0,
+            autoLevel: 1,
+            multiLevel: 1,
+            doubleLevel: 1,
+            doubleChance: 0.2,
+            startTime: Date.now(),
+            lastClickTime: Date.now(),
+            clicksThisSecond: 0,
+            autoClickerInterval: null
+        };
+
+        // ========== DOM ЭЛЕМЕНТЫ ==========
+        const elements = {
+            totalScore: document.getElementById('totalScore'),
+            multiplierDisplay: document.getElementById('multiplierDisplay'),
+            clicksPerSec: document.getElementById('clicksPerSec'),
+            autoClicks: document.getElementById('autoClicks'),
+            gameTime: document.getElementById('gameTime'),
+            availablePoints: document.getElementById('availablePoints'),
+            autoLevel: document.getElementById('autoLevel'),
+            multiLevel: document.getElementById('multiLevel'),
+            doubleLevel: document.getElementById('doubleLevel'),
+            autoSpeed: document.getElementById('autoSpeed'),
+            autoPower: document.getElementById('autoPower'),
+            currentMulti: document.getElementById('currentMulti'),
+            nextMulti: document.getElementById('nextMulti'),
+            doubleChance: document.getElementById('doubleChance'),
+            autoCost: document.getElementById('autoCost'),
+            multiCost: document.getElementById('multiCost'),
+            doubleCost: document.getElementById('doubleCost'),
+            buyAuto: document.getElementById('buyAuto'),
+            buyMulti: document.getElementById('buyMulti'),
+            buyDouble: document.getElementById('buyDouble'),
+            bogdanButton: document.getElementById('bogdanButton'),
+            gameLink: document.getElementById('gameLink'),
+            playerCount: document.getElementById('playerCount')
+        };
+
+        // ========== ИНИЦИАЛИЗАЦИЯ ==========
+        function initGame() {
+            loadGame();
+            setupEventListeners();
+            setupAutoClicker();
+            updateGameLink();
+            updateUI();
+            
+            // Обновление UI каждые 100мс
+            setInterval(updateUI, 100);
+            
+            // Автосохранение каждые 30 секунд
+            setInterval(saveGame, 30000);
+            
+            // Симуляция онлайн-игроков
+            setInterval(updatePlayerCount, 5000);
+            
+            console.log('🚀 Игра "Кнопочка Богдана" запущена!');
+        }
+
+        // ========== ОСНОВНАЯ ЛОГИКА ==========
+        function clickBogdan() {
+            const basePoints = 1;
+            let points = basePoints * gameState.multiplier;
+            
+            // Проверка на удвоитель
+            if (Math.random() * 100 < gameState.doubleChance) {
+                points *= 2;
+                showFloatingText('x2 КРИТ!', '#f6b93b');
+            }
+            
+            gameState.totalScore += points;
+            gameState.availablePoints += points;
+            gameState.clicksThisSecond++;
+            
+            updateUI();
+            saveGame();
+            createTapAnimation(event);
+        }
+
+        function calculateUpgradeCost(baseCost, level, multiplier = 1.15) {
+            return Math.floor(baseCost * Math.pow(multiplier, level - 1));
+        }
+
+        function calculateAutoStats(level) {
+            const speed = 1 + (level - 1) * 0.1;
+            const power = 1.0 + (level - 1) * 0.05;
+            return {
+                speed: Math.round(speed * 10) / 10,
+                power: Math.round(power * 100) / 100
+            };
+        }
+
+        function buyUpgrade(type) {
+            let cost = 0;
+            
+            switch(type) {
+                case 'auto':
+                    cost = calculateUpgradeCost(100, gameState.autoLevel);
+                    if (gameState.availablePoints >= cost && gameState.autoLevel < 1000) {
+                        gameState.availablePoints -= cost;
+                        gameState.autoLevel++;
+                        setupAutoClicker();
+                    }
+                    break;
+                    
+                case 'multi':
+                    cost = calculateUpgradeCost(50, gameState.multiLevel, 1.12);
+                    if (gameState.availablePoints >= cost && gameState.multiLevel < 1000) {
+                        gameState.availablePoints -= cost;
+                        gameState.multiLevel++;
+                        gameState.multiplier = 1.0 + (gameState.multiLevel - 1) * 0.1;
+                    }
+                    break;
+                    
+                case 'double':
+                    cost = calculateUpgradeCost(200, gameState.doubleLevel, 1.2);
+                    if (gameState.availablePoints >= cost && gameState.doubleLevel < 500) {
+                        gameState.availablePoints -= cost;
+                        gameState.doubleLevel++;
+                        gameState.doubleChance = 0.2 + (gameState.doubleLevel - 1) * 0.2;
+                    }
+                    break;
+            }
+            
+            updateUI();
+            saveGame();
+        }
+
+        // ========== АВТОКЛИКЕР ==========
+        function setupAutoClicker() {
+            clearInterval(gameState.autoClickerInterval);
+            const stats = calculateAutoStats(gameState.autoLevel);
+            
+            gameState.autoClickerInterval = setInterval(() => {
+                const points = stats.power * gameState.multiplier;
+                gameState.totalScore += points;
+                gameState.availablePoints += points;
+                updateUI();
+            }, 1000 / stats.speed);
+        }
+
+        // ========== ИНТЕРФЕЙС ==========
+        function updateUI() {
+            // Обновление основного экрана
+            elements.totalScore.textContent = Math.floor(gameState.totalScore).toLocaleString('ru-RU');
+            elements.multiplierDisplay.textContent = 'x' + gameState.multiplier.toFixed(1);
+            elements.availablePoints.textContent = Math.floor(gameState.availablePoints).toLocaleString('ru-RU');
+            
+            // Статистика
+            const now = Date.now();
+            const timeDiff = Math.floor((now - gameState.lastClickTime) / 1000);
+            if (timeDiff >= 1) {
+                gameState.clicksThisSecond = 0;
+                gameState.lastClickTime = now;
+            }
+            elements.clicksPerSec.textContent = gameState.clicksThisSecond;
+            
+            const sessionTime = Math.floor((now - gameState.startTime) / 1000);
+            elements.gameTime.textContent = sessionTime + 'с';
+            
+            const autoStats = calculateAutoStats(gameState.autoLevel);
+            elements.autoClicks.textContent = autoStats.speed.toFixed(1) + '/сек';
+            
+            // Обновление улучшений
+            elements.autoLevel.textContent = gameState.autoLevel;
+            elements.multiLevel.textContent = gameState.multiLevel;
+            elements.doubleLevel.textContent = gameState.doubleLevel;
+            
+            elements.autoSpeed.textContent = autoStats.speed.toFixed(1);
+            elements.autoPower.textContent = autoStats.power.toFixed(1);
+            elements.currentMulti.textContent = gameState.multiplier.toFixed(1);
+            elements.nextMulti.textContent = (gameState.multiplier + 0.1).toFixed(1);
+            elements.doubleChance.textContent = gameState.doubleChance.toFixed(1);
+            
+            // Стоимость улучшений
+            elements.autoCost.textContent = calculateUpgradeCost(100, gameState.autoLevel).toLocaleString('ru-RU');
+            elements.multiCost.textContent = calculateUpgradeCost(50, gameState.multiLevel, 1.12).toLocaleString('ru-RU');
+            elements.doubleCost.textContent = calculateUpgradeCost(200, gameState.doubleLevel, 1.2).toLocaleString('ru-RU');
+            
+            // Активация/деактивация кнопок
+            elements.buyAuto.disabled = gameState.availablePoints < calculateUpgradeCost(100, gameState.autoLevel) || gameState.autoLevel >= 1000;
+            elements.buyMulti.disabled = gameState.availablePoints < calculateUpgradeCost(50, gameState.multiLevel, 1.12) || gameState.multiLevel >= 1000;
+            elements.buyDouble.disabled = gameState.availablePoints < calculateUpgradeCost(200, gameState.doubleLevel, 1.2) || gameState.doubleLevel >= 500;
+            
+            // Текст кнопок при максимальном уровне
+            elements.buyAuto.textContent = gameState.autoLevel >= 1000 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : 'КУПИТЬ УЛУЧШЕНИЕ';
+            elements.buyMulti.textContent = gameState.multiLevel >= 1000 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : 'КУПИТЬ УЛУЧШЕНИЕ';
+            elements.buyDouble.textContent = gameState.doubleLevel >= 500 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : 'КУПИТЬ УЛУЧШЕНИЕ';
+        }
+
+        // ========== ВИЗУАЛЬНЫЕ ЭФФЕКТЫ ==========
+        function createTapAnimation(event) {
+            const x = event.clientX || event.touches[0].clientX;
+            const y = event.clientY || event.touches[0].clientY;
+            
+            const tapEl = document.createElement('div');
+            tapEl.className = 'tap-animation';
+            tapEl.style.left = (x - 30) + 'px';
+            tapEl.style.top = (y - 30) + 'px';
+            
+            document.body.appendChild(tapEl);
+            setTimeout(() => tapEl.remove(), 600);
+        }
+
+        function showFloatingText(text, color) {
+            const floatingText = document.createElement('div');
+            floatingText.textContent = text;
+            floatingText.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 2rem;
+                font-weight: bold;
+                color: ${color};
+                z-index: 1001;
+                text-shadow: 0 0 10px ${color};
+                animation: floatUp 1s ease-out;
+            `;
+            
+            document.body.appendChild(floatingText);
+            setTimeout(() => floatingText.remove(), 1000);
+        }
+
+        // ========== НАВИГАЦИЯ ==========
+        function setupEventListeners() {
+            // Навигация по вкладкам
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tabId = btn.getAttribute('data-tab');
+                    
+                    // Убрать активный класс у всех кнопок и вкладок
+                    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                    document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
+                    
+                    // Добавить активный класс выбранной кнопке и вкладке
+                    btn.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Клик по Богдану
+            elements.bogdanButton.addEventListener('click', clickBogdan);
+            elements.bogdanButton.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                clickBogdan(e);
+            }, { passive: false });
+            
+            // Кнопки покупки улучшений
+            elements.buyAuto.addEventListener('click', () => buyUpgrade('auto'));
+            elements.buyMulti.addEventListener('click', () => buyUpgrade('multi'));
+            elements.buyDouble.addEventListener('click', () => buyUpgrade('double'));
+        }
+
+        // ========== СОХРАНЕНИЕ И ЗАГРУЗКА ==========
+        function saveGame() {
+            localStorage.setItem('bogdanGame_v2', JSON.stringify(gameState));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('bogdanGame_v2');
+            if (saved) {
+                const loaded = JSON.parse(saved);
+                Object.assign(gameState, loaded);
+                gameState.startTime = loaded.startTime || Date.now();
+                gameState.lastClickTime = Date.now();
+            }
+        }
+
+        // ========== ОНЛАЙН ФУНКЦИИ ==========
+        function updateGameLink() {
+            elements.gameLink.textContent = window.location.href;
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href)
+                .then(() => alert('✅ Ссылка скопирована! Отправьте другу.'));
+        }
+
+        function shareGame() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Кнопочка Богдана',
+                    text: 'Играй в крутую онлайн игру!',
+                    url: window.location.href
+                });
+            } else {
+                copyLink();
+            }
+        }
+
+        function updatePlayerCount() {
+            const fakeCount = 50 + Math.floor(Math.random() * 150);
+            elements.playerCount.textContent = `Сейчас играют: ${fakeCount} человек`;
+        }
+
+        // ========== ЗАПУСК ИГРЫ ==========
+        window.addEventListener('load', initGame);
+        
+        // Добавляем стиль для плавающего текста
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+                100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
