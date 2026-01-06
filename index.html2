@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- PWA МЕТА-ТЕГИ -->
+    <meta name="theme-color" content="#0c2461">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAA1BMVEX///+nxBvIAAAASElEQVR4nO3BAQEAAACCIP+vbkhAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB8GxXgAAGhawT4AAAAAElFTkSuQmCC">
+    
+    <title>Кнопочка Богдана | PWA</title>
+    
+    <style>
+        /* СБРОС И БАЗОВЫЕ СТИЛИ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0c2461, #1e3799);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* УВЕДОМЛЕНИЕ О PWA */
+        .pwa-install {
+            background: linear-gradient(90deg, #f6b93b, #e55039);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.5s;
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .pwa-install button {
+            background: white;
+            color: #0c2461;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* ОСНОВНОЙ КОНТЕЙНЕР */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* ШАПКА */
+        header {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 20px;
+            border: 2px solid #f6b93b;
+        }
+
+        h1 {
+            font-size: 2rem;
+            color: #f6b93b;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #82ccdd;
+            font-size: 0.9rem;
+        }
+
+        /* ИНСТАЛЛ ПОДСКАЗКА */
+        .install-hint {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-size: 0.8rem;
+            color: #82ccdd;
+            border: 1px dashed #f6b93b;
+        }
+
+        /* КНОПКА БОГДАНА */
+        .bogdan-btn {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #e55039, #b71540);
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 0 40px #e55039;
+            cursor: pointer;
+            transition: transform 0.1s;
+            touch-action: manipulation;
+        }
+
+        .bogdan-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* СЧЁТ */
+        #score {
+            font-size: 3rem;
+            color: #f6b93b;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+
+        /* СТАТИСТИКА */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: #f6b93b;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #82ccdd;
+        }
+
+        /* КНОПКА ИНСТАЛЛА */
+        .install-btn {
+            background: linear-gradient(90deg, #78e08f, #38ada9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: bold;
+            margin: 20px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* ФУТЕР */
+        footer {
+            margin-top: 30px;
+            color: #636e72;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 400px) {
+            .bogdan-btn {
+                width: 180px;
+                height: 180px;
+                font-size: 1.6rem;
+            }
+            #score { font-size: 2.5rem; }
+            h1 { font-size: 1.8rem; }
+        }
+
+        /* ТЁМНАЯ ТЕМА */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- УВЕДОМЛЕНИЕ ОБ ИНСТАЛЛЕ -->
+    <div class="pwa-install" id="pwaInstallPrompt">
+        <p>📱 Установите игру на главный экран!</p>
+        <p style="font-size: 0.8rem;">Работает офлайн, как приложение</p>
+        <button onclick="installPWA()">Установить</button>
+        <button onclick="hidePrompt()" style="background: transparent; color: white; margin-left: 10px;">Позже</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>🎮 КНОПОЧКА БОГДАНА</h1>
+            <p class="subtitle">PWA версия | Установите как приложение!</p>
+            
+            <div class="install-hint">
+                💡 Для установки: нажмите "Поделиться" → "Добавить на главный экран"
+            </div>
+        </header>
+
+        <div id="score">0</div>
+        <p style="color: #82ccdd;">Сила Богдана</p>
+
+        <button class="bogdan-btn" id="bogdanBtn">ТАПАТЬ</button>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div id="cps" class="stat-value">0</div>
+                <div class="stat-label">Тапов/сек</div>
+            </div>
+            <div class="stat-box">
+                <div id="multiplier" class="stat-value">x1.0</div>
+                <div class="stat-label">Множитель</div>
+            </div>
+            <div class="stat-box">
+                <div id="autoclick" class="stat-value">0/сек</div>
+                <div class="stat-label">Авто-тап</div>
+            </div>
+            <div class="stat-box">
+                <div id="crystals" class="stat-value">0</div>
+                <div class="stat-label">💎 Кристаллы</div>
+            </div>
+        </div>
+
+        <button class="install-btn" onclick="showInstallInstructions()">
+            📲 Как установить?
+        </button>
+
+        <footer>
+            <p>🔋 Работает офлайн | 📱 Установите как приложение</p>
+            <p style="margin-top: 10px; color: #f6b93b;" id="pwaStatus">Проверка PWA...</p>
+        </footer>
+    </div>
+
+    <script>
+        // ========== PWA ФУНКЦИИ ==========
+        let deferredPrompt;
+        let isPWAInstalled = false;
+
+        // Проверяем, установлено ли PWA
+        function checkPWA() {
+            if (window.matchMedia('(display-mode: standalone)').matches ||
+                window.navigator.standalone ||
+                document.referrer.includes('android-app://')) {
+                isPWAInstalled = true;
+                document.getElementById('pwaStatus').textContent = '✅ Установлено как приложение';
+                document.getElementById('pwaInstallPrompt').style.display = 'none';
+            } else {
+                document.getElementById('pwaStatus').textContent = '📱 Доступно для установки';
+            }
+        }
+
+        // Отслеживаем событие beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Показываем кнопку установки через 3 секунды
+            setTimeout(() => {
+                if (!isPWAInstalled) {
+                    document.getElementById('pwaInstallPrompt').style.display = 'block';
+                }
+            }, 3000);
+        });
+
+        // Установка PWA
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('PWA установлено');
+                        document.getElementById('pwaInstallPrompt').style.display = 'none';
+                        isPWAInstalled = true;
+                    }
+                    deferredPrompt = null;
+                });
+            } else {
+                showInstallInstructions();
+            }
+        }
+
+        // Показать инструкцию по установке
+        function showInstallInstructions() {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isAndroid = /Android/.test(navigator.userAgent);
+            
+            let message = '';
+            
+            if (isIOS) {
+                message = '📱 На iPhone/iPad:\n1. Нажмите кнопку "Поделиться" (📤)\n2. Прокрутите вниз\n3. Нажмите "На экран «Домой»"\n4. Подтвердите установку';
+            } else if (isAndroid) {
+                message = '📱 На Android:\n1. Нажмите меню (три точки)\n2. Выберите "Добавить на главный экран"\n3. Подтвердите установку';
+            } else {
+                message = '💻 На компьютере:\n1. Нажмите меню браузера\n2. Выберите "Установить приложение"\n3. Подтвердите установку';
+            }
+            
+            alert(message);
+        }
+
+        function hidePrompt() {
+            document.getElementById('pwaInstallPrompt').style.display = 'none';
+        }
+
+        // Отслеживаем установку
+        window.addEventListener('appinstalled', () => {
+            isPWAInstalled = true;
+            document.getElementById('pwaInstallPrompt').style.display = 'none';
+            document.getElementById('pwaStatus').textContent = '✅ Установлено как приложение';
+        });
+
+        // ========== ИГРОВАЯ ЛОГИКА ==========
+        let game = {
+            score: 0,
+            crystals: 0,
+            multiplier: 1.0,
+            autoLevel: 1,
+            clicks: 0,
+            lastTime: Date.now(),
+            autoInterval: null
+        };
+
+        function initGame() {
+            loadGame();
+            updateDisplay();
+            
+            // Автокликер
+            clearInterval(game.autoInterval);
+            game.autoInterval = setInterval(() => {
+                game.score += game.autoLevel * game.multiplier;
+                updateDisplay();
+                saveGame();
+            }, 1000);
+            
+            // Автосохранение
+            setInterval(saveGame, 10000);
+            
+            // Проверяем PWA
+            checkPWA();
+            
+            console.log('🎮 Игра запущена как PWA');
+        }
+
+        function clickBogdan() {
+            game.score += 1 * game.multiplier;
+            game.clicks++;
+            
+            // Шанс получить кристалл
+            if (Math.random() < 0.02) {
+                game.crystals++;
+            }
+            
+            updateDisplay();
+            saveGame();
+            
+            // Анимация
+            const btn = document.getElementById('bogdanBtn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = 'scale(1)', 100);
+            
+            // Вибрация (если поддерживается)
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        function updateDisplay() {
+            // Счёт
+            document.getElementById('score').textContent = Math.floor(game.score).toLocaleString();
+            document.getElementById('crystals').textContent = game.crystals;
+            document.getElementById('multiplier').textContent = 'x' + game.multiplier.toFixed(1);
+            
+            // CPS
+            const now = Date.now();
+            if (now - game.lastTime >= 1000) {
+                document.getElementById('cps').textContent = game.clicks;
+                game.clicks = 0;
+                game.lastTime = now;
+            }
+            
+            // Автокликер
+            document.getElementById('autoclick').textContent = game.autoLevel + '/сек';
+        }
+
+        // ========== СОХРАНЕНИЕ ==========
+        function saveGame() {
+            localStorage.setItem('bogdanPWA', JSON.stringify(game));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('bogdanPWA');
+            if (saved) {
+                game = JSON.parse(saved);
+                game.lastTime = Date.now();
+                game.clicks = 0;
+            }
+        }
+
+        // ========== СОБЫТИЯ ==========
+        document.getElementById('bogdanBtn').addEventListener('click', clickBogdan);
+        document.getElementById('bogdanBtn').addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            clickBogdan();
+        }, { passive: false });
+
+        // Долгое нажатие для улучшений
+        let pressTimer;
+        document.getElementById('bogdanBtn').addEventListener('touchstart', function(e) {
+            pressTimer = setTimeout(() => {
+                // Улучшение за кристаллы
+                if (game.crystals >= 10) {
+                    game.crystals -= 10;
+                    game.multiplier += 0.5;
+                    alert('✅ Улучшение куплено! Множитель: x' + game.multiplier.toFixed(1));
+                    updateDisplay();
+                    saveGame();
+                }
+            }, 1000);
+        });
+
+        document.getElementById('bogdanBtn').addEventListener('touchend', function() {
+            clearTimeout(pressTimer);
+        });
+
+        // ========== ОФФЛАЙН РАБОТА ==========
+        // Регистрируем Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Создаём inline Service Worker
+                const swCode = `
+                    self.addEventListener('install', event => {
+                        console.log('🎮 Service Worker установлен');
+                        self.skipWaiting();
+                    });
+
+                    self.addEventListener('activate', event => {
+                        console.log('🎮 Service Worker активирован');
+                    });
+
+                    self.addEventListener('fetch', event => {
+                        // Пропускаем все запросы - игра работает офлайн
+                        console.log('🎮 Запрос из кэша:', event.request.url);
+                    });
+                `;
+
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swURL = URL.createObjectURL(blob);
+
+                navigator.serviceWorker.register(swURL)
+                    .then(registration => {
+                        console.log('✅ Service Worker зарегистрирован');
+                    })
+                    .catch(error => {
+                        console.log('❌ Ошибка Service Worker:', error);
+                    });
+            });
+        }
+
+        // ========== ЗАПУСК ==========
+        window.addEventListener('load', initGame);
+        
+        // Предотвращаем контекстное меню на телефоне
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        
+        // Предотвращаем масштабирование
+        document.addEventListener('touchmove', function(e) {
+            if(e.scale !== 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
