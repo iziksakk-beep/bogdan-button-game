@@ -219,6 +219,18 @@
             color: #82ccdd;
         }
 
+        /* Кристаллы */
+        .crystals-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 15px;
+            border: 2px solid #f6b93b;
+            z-index: 100;
+        }
+
         /* Вкладка прокачки */
         .upgrades-list {
             display: flex;
@@ -307,6 +319,126 @@
             opacity: 0.6;
         }
 
+        /* Вкладка "Колесо фортуны" */
+        .wheel-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .wheel {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            position: relative;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 5px solid #f6b93b;
+        }
+
+        .wheel-segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            left: 0;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .wheel-center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #e55039;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 5px solid white;
+            font-weight: bold;
+        }
+
+        .wheel-prize {
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            margin: 10px;
+            min-width: 150px;
+        }
+
+        /* Вкладка "Достижения" */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .achievement-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .achievement-card.unlocked {
+            border-color: #f6b93b;
+            background: rgba(246, 185, 59, 0.1);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .achievement-progress {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .achievement-progress-bar {
+            height: 100%;
+            background: #78e08f;
+            transition: width 0.5s;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 5px solid #f6b93b;
+            max-width: 300px;
+            z-index: 1000;
+            animation: slideIn 0.5s, fadeOut 0.5s 2.5s;
+            animation-fill-mode: forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; }
+        }
+
         /* Вкладка "Об игре" */
         .about-content {
             padding: 20px;
@@ -385,6 +517,7 @@
             #totalScore { font-size: 3.5rem; }
             .stats-grid { grid-template-columns: 1fr; }
             .nav-btn { min-width: 120px; padding: 10px; }
+            .wheel { width: 250px; height: 250px; }
         }
 
         /* Анимация тапа */
@@ -406,6 +539,11 @@
     </style>
 </head>
 <body>
+    <!-- Кристаллы -->
+    <div class="crystals-display">
+        💎 Кристаллы: <span id="crystalsCount">0</span>
+    </div>
+
     <!-- Шапка сайта -->
     <header class="site-header">
         <h1 class="site-title">🎮 КНОПОЧКА БОГДАНА</h1>
@@ -422,6 +560,8 @@
         <nav class="game-nav">
             <button class="nav-btn active" data-tab="play">🎮 Играть</button>
             <button class="nav-btn" data-tab="upgrades">⚡ Прокачка</button>
+            <button class="nav-btn" data-tab="wheel">🎡 Колесо</button>
+            <button class="nav-btn" data-tab="achievements">🏆 Достижения</button>
             <button class="nav-btn" data-tab="about">📖 Об игре</button>
         </nav>
 
@@ -431,7 +571,10 @@
                 <div class="score-container">
                     <div class="score-label">СИЛА БОГДАНА</div>
                     <div id="totalScore">0</div>
-                    <div class="multiplier-display">Множитель силы: <span id="multiplierDisplay">x1.0</span></div>
+                    <div class="multiplier-display">
+                        Множитель силы: <span id="multiplierDisplay">x1.0</span>
+                        <div style="font-size: 0.9rem; color: #f6b93b;" id="activeBoosts"></div>
+                    </div>
                 </div>
 
                 <div class="bogdan-btn-container">
@@ -475,7 +618,7 @@
                         <div>Скорость: <span id="autoSpeed">1.0</span>/сек</div>
                         <div>Сила: <span id="autoPower">1.0</span>x</div>
                     </div>
-                    <div class="upgrade-cost">Стоимость: <span id="autoCost">100</span></div>
+                    <div class="upgrade-cost">Стоимость: <span id="autoCost">100</span> очков</div>
                     <button class="buy-btn" id="buyAuto">КУПИТЬ УЛУЧШЕНИЕ</button>
                 </div>
 
@@ -492,7 +635,7 @@
                         <div>Текущий: <span id="currentMulti">1.0</span>x</div>
                         <div>Следующий: <span id="nextMulti">1.1</span>x</div>
                     </div>
-                    <div class="upgrade-cost">Стоимость: <span id="multiCost">50</span></div>
+                    <div class="upgrade-cost">Стоимость: <span id="multiCost">50</span> очков</div>
                     <button class="buy-btn" id="buyMulti">КУПИТЬ УЛУЧШЕНИЕ</button>
                 </div>
 
@@ -509,9 +652,55 @@
                         <div>Шанс: <span id="doubleChance">0.2</span>%</div>
                         <div>Множитель: 2x</div>
                     </div>
-                    <div class="upgrade-cost">Стоимость: <span id="doubleCost">200</span></div>
+                    <div class="upgrade-cost">Стоимость: <span id="doubleCost">200</span> очков</div>
                     <button class="buy-btn" id="buyDouble">КУПИТЬ УЛУЧШЕНИЕ</button>
                 </div>
+            </div>
+        </section>
+
+        <!-- Вкладка КОЛЕСО ФОРТУНЫ -->
+        <section id="wheel" class="game-tab">
+            <div class="wheel-container">
+                <h2 style="color: #f6b93b;">🎡 КОЛЕСО ФОРТУНЫ</h2>
+                <p>Крути колесо за 10 кристаллов! Выигрывай бусты и призы!</p>
+                
+                <div class="wheel" id="fortuneWheel">
+                    <!-- Сегменты колеса будут созданы JavaScript -->
+                </div>
+                
+                <div class="wheel-center" id="spinButton">
+                    КРУТИТЬ<br>💎10
+                </div>
+                
+                <div style="margin: 20px 0;">
+                    <button id="freeSpinBtn" class="buy-btn" style="max-width: 200px;">
+                        🎁 Бесплатный спин (ждем: <span id="spinTimer">24:00</span>)
+                    </button>
+                </div>
+                
+                <h3>🎁 Возможные призы:</h3>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+                    <div class="wheel-prize">💎 50 кристаллов</div>
+                    <div class="wheel-prize">⚡ x2 Множитель на 30 сек</div>
+                    <div class="wheel-prize">🚀 x3 Авто-тап на 1 мин</div>
+                    <div class="wheel-prize">💰 1000 очков</div>
+                    <div class="wheel-prize">👑 x5 Множитель на 10 сек</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Вкладка ДОСТИЖЕНИЯ -->
+        <section id="achievements" class="game-tab">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h2 style="color: #f6b93b;">🏆 ДОСТИЖЕНИЯ</h2>
+                <p>Выполняйте достижения и получайте кристаллы!</p>
+                <div style="background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; display: inline-block;">
+                    💎 Всего кристаллов: <span id="totalCrystalsEarned">0</span>
+                </div>
+            </div>
+            
+            <div class="achievements-grid" id="achievementsList">
+                <!-- Достижения будут созданы JavaScript -->
             </div>
         </section>
 
@@ -526,16 +715,16 @@
                 2. Зарабатывайте очки силы<br>
                 3. Переходите во вкладку "Прокачка"<br>
                 4. Улучшайте авто-Богдана и множители<br>
-                5. Становитесь самым сильным!</p>
+                5. Крутите колесо фортуны за кристаллы<br>
+                6. Получайте достижения и бусты!</p>
                 
-                <h3>🌟 Особенности игры:</h3>
+                <h3>🌟 Новые функции:</h3>
                 <ul class="features-list">
-                    <li>Полностью бесплатно, без регистрации</li>
-                    <li>Работает на любом устройстве (телефон, планшет, компьютер)</li>
-                    <li>Автосохранение прогресса</li>
-                    <li>3 вида улучшений с 1000+ уровней</li>
-                    <li>Красивые визуальные эффекты</li>
-                    <li>Можно играть офлайн после загрузки</li>
+                    <li>🎡 Колесо фортуны с призами</li>
+                    <li>🏆 Система достижений</li>
+                    <li>💎 Кристаллы за выполнение заданий</li>
+                    <li>🔊 Звуковые эффекты</li>
+                    <li>⚡ Временные бусты и множители</li>
                 </ul>
                 
                 <h3>🔗 Поделитесь с друзьями!</h3>
@@ -558,11 +747,19 @@
         <p>Ссылка на игру: <span id="gameLink">...</span></p>
     </footer>
 
+    <!-- Звуковые эффекты -->
+    <audio id="tapSound" preload="auto"></audio>
+    <audio id="spinSound" preload="auto"></audio>
+    <audio id="achievementSound" preload="auto"></audio>
+    <audio id="buySound" preload="auto"></audio>
+
     <script>
         // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
         let gameState = {
             totalScore: 0,
             availablePoints: 0,
+            crystals: 0,
+            totalCrystalsEarned: 0,
             multiplier: 1.0,
             autoLevel: 1,
             multiLevel: 1,
@@ -571,8 +768,35 @@
             startTime: Date.now(),
             lastClickTime: Date.now(),
             clicksThisSecond: 0,
-            autoClickerInterval: null
+            autoClickerInterval: null,
+            activeBoosts: [],
+            achievements: [],
+            lastFreeSpin: 0
         };
+
+        // ========== ДОСТИЖЕНИЯ ==========
+        const ACHIEVEMENTS_DATA = [
+            { id: 1, name: "🚀 Первые шаги", desc: "Сделать 100 тапов", icon: "🚀", target: 100, reward: 10, progress: 0 },
+            { id: 2, name: "⚡ Автоматизация", desc: "Купить авто-Богдана 5 ур.", icon: "⚡", target: 5, reward: 20, progress: 0 },
+            { id: 3, name: "💪 Могучий", desc: "Множитель x5", icon: "💪", target: 5, reward: 30, progress: 0 },
+            { id: 4, name: "🏆 Мастер", desc: "10000 очков", icon: "🏆", target: 10000, reward: 50, progress: 0 },
+            { id: 5, name: "👑 Король", desc: "Авто-Богдан 50 ур.", icon: "👑", target: 50, reward: 100, progress: 0 },
+            { id: 6, name: "🎯 Снайпер", desc: "1000 критических ударов", icon: "🎯", target: 1000, reward: 40, progress: 0 },
+            { id: 7, name: "💎 Коллекционер", desc: "Собрать 500 кристаллов", icon: "💎", target: 500, reward: 100, progress: 0 },
+            { id: 8, name: "🎡 Везунчик", desc: "Крутить колесо 10 раз", icon: "🎡", target: 10, reward: 25, progress: 0 }
+        ];
+
+        // ========== КОЛЕСО ФОРТУНЫ ==========
+        const WHEEL_PRIZES = [
+            { type: 'crystals', value: 50, text: '💎 50 кристаллов', color: '#f6b93b' },
+            { type: 'multiplier', value: 2, text: '⚡ x2 Множитель 30с', color: '#78e08f' },
+            { type: 'autotap', value: 3, text: '🚀 x3 Авто-тап 60с', color: '#4a69bd' },
+            { type: 'points', value: 1000, text: '💰 1000 очков', color: '#e55039' },
+            { type: 'multiplier', value: 5, text: '👑 x5 Множитель 10с', color: '#f6b93b' },
+            { type: 'crystals', value: 10, text: '💎 10 кристаллов', color: '#78e08f' },
+            { type: 'points', value: 500, text: '💰 500 очков', color: '#4a69bd' },
+            { type: 'autotap', value: 2, text: '🚀 x2 Авто-тап 30с', color: '#e55039' }
+        ];
 
         // ========== DOM ЭЛЕМЕНТЫ ==========
         const elements = {
@@ -582,6 +806,9 @@
             autoClicks: document.getElementById('autoClicks'),
             gameTime: document.getElementById('gameTime'),
             availablePoints: document.getElementById('availablePoints'),
+            crystalsCount: document.getElementById('crystalsCount'),
+            totalCrystalsEarned: document.getElementById('totalCrystalsEarned'),
+            activeBoosts: document.getElementById('activeBoosts'),
             autoLevel: document.getElementById('autoLevel'),
             multiLevel: document.getElementById('multiLevel'),
             doubleLevel: document.getElementById('doubleLevel'),
@@ -598,47 +825,141 @@
             buyDouble: document.getElementById('buyDouble'),
             bogdanButton: document.getElementById('bogdanButton'),
             gameLink: document.getElementById('gameLink'),
-            playerCount: document.getElementById('playerCount')
+            playerCount: document.getElementById('playerCount'),
+            fortuneWheel: document.getElementById('fortuneWheel'),
+            spinButton: document.getElementById('spinButton'),
+            freeSpinBtn: document.getElementById('freeSpinBtn'),
+            spinTimer: document.getElementById('spinTimer'),
+            achievementsList: document.getElementById('achievementsList'),
+            tapSound: document.getElementById('tapSound'),
+            spinSound: document.getElementById('spinSound'),
+            achievementSound: document.getElementById('achievementSound'),
+            buySound: document.getElementById('buySound')
         };
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         function initGame() {
             loadGame();
+            initSounds();
             setupEventListeners();
             setupAutoClicker();
+            createWheel();
+            createAchievements();
             updateGameLink();
             updateUI();
+            startBoostChecker();
             
-            // Обновление UI каждые 100мс
+            // Обновление UI
             setInterval(updateUI, 100);
-            
-            // Автосохранение каждые 30 секунд
+            setInterval(updateSpinTimer, 1000);
             setInterval(saveGame, 30000);
-            
-            // Симуляция онлайн-игроков
             setInterval(updatePlayerCount, 5000);
             
             console.log('🚀 Игра "Кнопочка Богдана" запущена!');
+        }
+
+        // ========== ЗВУКИ ==========
+        function initSounds() {
+            // Создаем простые звуки с помощью Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // Звук тапа
+            function createTapSound() {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.1);
+            }
+            
+            // Звук покупки
+            function createBuySound() {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.2);
+            }
+            
+            // Звук достижения
+            function createAchievementSound() {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime); // E5
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.1); // G5
+                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.2); // C6
+                oscillator.type = 'triangle';
+                
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+            }
+            
+            // Привязываем звуки к глобальным функциям
+            window.playTapSound = createTapSound;
+            window.playBuySound = createBuySound;
+            window.playAchievementSound = createAchievementSound;
         }
 
         // ========== ОСНОВНАЯ ЛОГИКА ==========
         function clickBogdan() {
             const basePoints = 1;
             let points = basePoints * gameState.multiplier;
+            let isCritical = false;
             
             // Проверка на удвоитель
             if (Math.random() * 100 < gameState.doubleChance) {
                 points *= 2;
-                showFloatingText('x2 КРИТ!', '#f6b93b');
+                isCritical = true;
+                showNotification('🎯 КРИТИЧЕСКИЙ УДАР! x2', '#f6b93b');
             }
+            
+            // Применяем активные бусты
+            gameState.activeBoosts.forEach(boost => {
+                if (boost.type === 'multiplier') {
+                    points *= boost.value;
+                }
+            });
             
             gameState.totalScore += points;
             gameState.availablePoints += points;
             gameState.clicksThisSecond++;
             
+            // Обновляем достижения
+            updateAchievementProgress(1, gameState.totalScore);
+            if (isCritical) updateAchievementProgress(6, 1);
+            
             updateUI();
             saveGame();
             createTapAnimation(event);
+            
+            // Воспроизводим звук
+            if (window.playTapSound) window.playTapSound();
         }
 
         function calculateUpgradeCost(baseCost, level, multiplier = 1.15) {
@@ -656,6 +977,7 @@
 
         function buyUpgrade(type) {
             let cost = 0;
+            let success = false;
             
             switch(type) {
                 case 'auto':
@@ -664,6 +986,9 @@
                         gameState.availablePoints -= cost;
                         gameState.autoLevel++;
                         setupAutoClicker();
+                        success = true;
+                        updateAchievementProgress(2, gameState.autoLevel);
+                        updateAchievementProgress(5, gameState.autoLevel);
                     }
                     break;
                     
@@ -673,6 +998,8 @@
                         gameState.availablePoints -= cost;
                         gameState.multiLevel++;
                         gameState.multiplier = 1.0 + (gameState.multiLevel - 1) * 0.1;
+                        success = true;
+                        updateAchievementProgress(3, gameState.multiplier);
                     }
                     break;
                     
@@ -682,12 +1009,16 @@
                         gameState.availablePoints -= cost;
                         gameState.doubleLevel++;
                         gameState.doubleChance = 0.2 + (gameState.doubleLevel - 1) * 0.2;
+                        success = true;
                     }
                     break;
             }
             
-            updateUI();
-            saveGame();
+            if (success) {
+                updateUI();
+                saveGame();
+                if (window.playBuySound) window.playBuySound();
+            }
         }
 
         // ========== АВТОКЛИКЕР ==========
@@ -696,19 +1027,215 @@
             const stats = calculateAutoStats(gameState.autoLevel);
             
             gameState.autoClickerInterval = setInterval(() => {
-                const points = stats.power * gameState.multiplier;
+                let points = stats.power * gameState.multiplier;
+                
+                // Применяем бусты авто-тапа
+                gameState.activeBoosts.forEach(boost => {
+                    if (boost.type === 'autotap') {
+                        points *= boost.value;
+                    }
+                });
+                
                 gameState.totalScore += points;
                 gameState.availablePoints += points;
                 updateUI();
             }, 1000 / stats.speed);
         }
 
+        // ========== КОЛЕСО ФОРТУНЫ ==========
+        function createWheel() {
+            elements.fortuneWheel.innerHTML = '';
+            const segmentAngle = 360 / WHEEL_PRIZES.length;
+            
+            WHEEL_PRIZES.forEach((prize, index) => {
+                const segment = document.createElement('div');
+                segment.className = 'wheel-segment';
+                segment.style.transform = `rotate(${index * segmentAngle}deg)`;
+                segment.style.backgroundColor = prize.color;
+                segment.innerHTML = `<div style="transform: rotate(${segmentAngle/2}deg);">${prize.text}</div>`;
+                elements.fortuneWheel.appendChild(segment);
+            });
+        }
+
+        function spinWheel(isFree = false) {
+            const spinCost = 10;
+            
+            if (!isFree && gameState.crystals < spinCost) {
+                showNotification('❌ Недостаточно кристаллов!', '#e55039');
+                return;
+            }
+            
+            if (!isFree) {
+                gameState.crystals -= spinCost;
+            }
+            
+            // Обновляем достижения
+            updateAchievementProgress(8, 1);
+            
+            const spinButton = elements.spinButton;
+            spinButton.style.pointerEvents = 'none';
+            spinButton.textContent = '🌀 КРУТИМ...';
+            
+            // Вращение
+            const spins = 5 + Math.floor(Math.random() * 3);
+            const totalDegrees = spins * 360 + Math.floor(Math.random() * 360);
+            const duration = 3000 + spins * 500;
+            
+            elements.fortuneWheel.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.3, 0.2, 1)`;
+            elements.fortuneWheel.style.transform = `rotate(${totalDegrees}deg)`;
+            
+            // Определяем выигрыш
+            setTimeout(() => {
+                const normalizedDegrees = totalDegrees % 360;
+                const segmentAngle = 360 / WHEEL_PRIZES.length;
+                const winningIndex = Math.floor((360 - normalizedDegrees) / segmentAngle) % WHEEL_PRIZES.length;
+                const prize = WHEEL_PRIZES[winningIndex];
+                
+                // Выдаем приз
+                awardPrize(prize);
+                
+                // Сбрасываем вращение
+                setTimeout(() => {
+                    elements.fortuneWheel.style.transition = 'none';
+                    elements.fortuneWheel.style.transform = 'rotate(0deg)';
+                    spinButton.style.pointerEvents = 'auto';
+                    spinButton.textContent = isFree ? '🎁 БЕСПЛАТНО' : 'КРУТИТЬ\n💎10';
+                    
+                    setTimeout(() => {
+                        elements.fortuneWheel.style.transition = 'transform 0.5s';
+                    }, 50);
+                }, 1000);
+                
+            }, duration);
+            
+            updateUI();
+            saveGame();
+        }
+
+        function awardPrize(prize) {
+            let message = `🎉 Вы выиграли: ${prize.text}`;
+            
+            switch(prize.type) {
+                case 'crystals':
+                    gameState.crystals += prize.value;
+                    gameState.totalCrystalsEarned += prize.value;
+                    break;
+                    
+                case 'points':
+                    gameState.totalScore += prize.value;
+                    gameState.availablePoints += prize.value;
+                    break;
+                    
+                case 'multiplier':
+                    addBoost('multiplier', prize.value, prize.type === 'multiplier' ? 30 : 10);
+                    break;
+                    
+                case 'autotap':
+                    addBoost('autotap', prize.value, prize.type === 'autotap' ? 60 : 30);
+                    break;
+            }
+            
+            showNotification(message, prize.color);
+            updateAchievementProgress(7, gameState.totalCrystalsEarned);
+        }
+
+        // ========== БУСТЫ ==========
+        function addBoost(type, value, duration) {
+            const boost = {
+                type: type,
+                value: value,
+                endTime: Date.now() + duration * 1000
+            };
+            
+            gameState.activeBoosts.push(boost);
+            showNotification(`⚡ Активирован буст: ${type === 'multiplier' ? 'x' + value + ' множитель' : 'x' + value + ' авто-тап'}`, '#78e08f');
+        }
+
+        function checkBoosts() {
+            const now = Date.now();
+            gameState.activeBoosts = gameState.activeBoosts.filter(boost => boost.endTime > now);
+        }
+
+        function startBoostChecker() {
+            setInterval(checkBoosts, 1000);
+        }
+
+        // ========== ДОСТИЖЕНИЯ ==========
+        function createAchievements() {
+            elements.achievementsList.innerHTML = '';
+            
+            ACHIEVEMENTS_DATA.forEach(ach => {
+                const card = document.createElement('div');
+                card.className = `achievement-card ${ach.progress >= ach.target ? 'unlocked' : ''}`;
+                card.innerHTML = `
+                    <div class="achievement-icon">${ach.icon}</div>
+                    <h4>${ach.name}</h4>
+                    <p>${ach.desc}</p>
+                    <div class="achievement-progress">
+                        <div class="achievement-progress-bar" style="width: ${Math.min(100, (ach.progress / ach.target) * 100)}%"></div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9rem;">
+                        ${ach.progress}/${ach.target} 
+                        ${ach.progress >= ach.target ? '✅ Получено' : `💎 Награда: ${ach.reward}`}
+                    </div>
+                `;
+                elements.achievementsList.appendChild(card);
+            });
+        }
+
+        function updateAchievementProgress(id, progress) {
+            const ach = ACHIEVEMENTS_DATA.find(a => a.id === id);
+            if (!ach || ach.progress >= ach.target) return;
+            
+            const oldProgress = ach.progress;
+            ach.progress = Math.max(ach.progress, Math.min(progress, ach.target));
+            
+            if (ach.progress >= ach.target && oldProgress < ach.target) {
+                // Достижение получено!
+                gameState.crystals += ach.reward;
+                gameState.totalCrystalsEarned += ach.reward;
+                showNotification(`🏆 Достижение получено: ${ach.name}! +${ach.reward}💎`, '#f6b93b');
+                createAchievements();
+                if (window.playAchievementSound) window.playAchievementSound();
+            }
+        }
+
+        // ========== ТАЙМЕР БЕСПЛАТНОГО СПИНА ==========
+        function updateSpinTimer() {
+            const now = Date.now();
+            const timeSinceLastSpin = now - gameState.lastFreeSpin;
+            const cooldown = 24 * 60 * 60 * 1000; // 24 часа
+            
+            if (timeSinceLastSpin >= cooldown) {
+                elements.freeSpinBtn.disabled = false;
+                elements.freeSpinBtn.textContent = '🎁 БЕСПЛАТНЫЙ СПИН';
+                elements.spinTimer.textContent = 'ГОТОВО';
+            } else {
+                const remaining = cooldown - timeSinceLastSpin;
+                const hours = Math.floor(remaining / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                elements.spinTimer.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            }
+        }
+
         // ========== ИНТЕРФЕЙС ==========
         function updateUI() {
-            // Обновление основного экрана
+            // Основной экран
             elements.totalScore.textContent = Math.floor(gameState.totalScore).toLocaleString('ru-RU');
             elements.multiplierDisplay.textContent = 'x' + gameState.multiplier.toFixed(1);
             elements.availablePoints.textContent = Math.floor(gameState.availablePoints).toLocaleString('ru-RU');
+            elements.crystalsCount.textContent = gameState.crystals;
+            elements.totalCrystalsEarned.textContent = gameState.totalCrystalsEarned;
+            
+            // Активные бусты
+            let boostsText = '';
+            gameState.activeBoosts.forEach(boost => {
+                const timeLeft = Math.ceil((boost.endTime - Date.now()) / 1000);
+                if (timeLeft > 0) {
+                    boostsText += `${boost.type === 'multiplier' ? '⚡ x' + boost.value : '🚀 x' + boost.value} (${timeLeft}с) `;
+                }
+            });
+            elements.activeBoosts.innerHTML = boostsText;
             
             // Статистика
             const now = Date.now();
@@ -725,7 +1252,7 @@
             const autoStats = calculateAutoStats(gameState.autoLevel);
             elements.autoClicks.textContent = autoStats.speed.toFixed(1) + '/сек';
             
-            // Обновление улучшений
+            // Улучшения
             elements.autoLevel.textContent = gameState.autoLevel;
             elements.multiLevel.textContent = gameState.multiLevel;
             elements.doubleLevel.textContent = gameState.doubleLevel;
@@ -736,23 +1263,32 @@
             elements.nextMulti.textContent = (gameState.multiplier + 0.1).toFixed(1);
             elements.doubleChance.textContent = gameState.doubleChance.toFixed(1);
             
-            // Стоимость улучшений
+            // Стоимость
             elements.autoCost.textContent = calculateUpgradeCost(100, gameState.autoLevel).toLocaleString('ru-RU');
             elements.multiCost.textContent = calculateUpgradeCost(50, gameState.multiLevel, 1.12).toLocaleString('ru-RU');
             elements.doubleCost.textContent = calculateUpgradeCost(200, gameState.doubleLevel, 1.2).toLocaleString('ru-RU');
             
-            // Активация/деактивация кнопок
+            // Кнопки
             elements.buyAuto.disabled = gameState.availablePoints < calculateUpgradeCost(100, gameState.autoLevel) || gameState.autoLevel >= 1000;
             elements.buyMulti.disabled = gameState.availablePoints < calculateUpgradeCost(50, gameState.multiLevel, 1.12) || gameState.multiLevel >= 1000;
             elements.buyDouble.disabled = gameState.availablePoints < calculateUpgradeCost(200, gameState.doubleLevel, 1.2) || gameState.doubleLevel >= 500;
             
-            // Текст кнопок при максимальном уровне
             elements.buyAuto.textContent = gameState.autoLevel >= 1000 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : 'КУПИТЬ УЛУЧШЕНИЕ';
             elements.buyMulti.textContent = gameState.multiLevel >= 1000 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : 'КУПИТЬ УЛУЧШЕНИЕ';
             elements.buyDouble.textContent = gameState.doubleLevel >= 500 ? 'МАКСИМАЛЬНЫЙ УРОВЕНЬ' : 'КУПИТЬ УЛУЧШЕНИЕ';
         }
 
-        // ========== ВИЗУАЛЬНЫЕ ЭФФЕКТЫ ==========
+        // ========== УВЕДОМЛЕНИЯ ==========
+        function showNotification(text, color) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = text;
+            notification.style.borderLeftColor = color;
+            
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
         function createTapAnimation(event) {
             const x = event.clientX || event.touches[0].clientX;
             const y = event.clientY || event.touches[0].clientY;
@@ -766,68 +1302,86 @@
             setTimeout(() => tapEl.remove(), 600);
         }
 
-        function showFloatingText(text, color) {
-            const floatingText = document.createElement('div');
-            floatingText.textContent = text;
-            floatingText.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 2rem;
-                font-weight: bold;
-                color: ${color};
-                z-index: 1001;
-                text-shadow: 0 0 10px ${color};
-                animation: floatUp 1s ease-out;
-            `;
-            
-            document.body.appendChild(floatingText);
-            setTimeout(() => floatingText.remove(), 1000);
-        }
-
-        // ========== НАВИГАЦИЯ ==========
+        // ========== СОБЫТИЯ ==========
         function setupEventListeners() {
-            // Навигация по вкладкам
+            // Навигация
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tabId = btn.getAttribute('data-tab');
-                    
-                    // Убрать активный класс у всех кнопок и вкладок
                     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
                     document.querySelectorAll('.game-tab').forEach(t => t.classList.remove('active'));
-                    
-                    // Добавить активный класс выбранной кнопке и вкладке
                     btn.classList.add('active');
                     document.getElementById(tabId).classList.add('active');
                 });
             });
             
-            // Клик по Богдану
+            // Кнопка Богдана
             elements.bogdanButton.addEventListener('click', clickBogdan);
             elements.bogdanButton.addEventListener('touchstart', function(e) {
                 e.preventDefault();
                 clickBogdan(e);
             }, { passive: false });
             
-            // Кнопки покупки улучшений
+            // Улучшения
             elements.buyAuto.addEventListener('click', () => buyUpgrade('auto'));
             elements.buyMulti.addEventListener('click', () => buyUpgrade('multi'));
             elements.buyDouble.addEventListener('click', () => buyUpgrade('double'));
+            
+            // Колесо фортуны
+            elements.spinButton.addEventListener('click', () => spinWheel(false));
+            elements.freeSpinBtn.addEventListener('click', () => {
+                const now = Date.now();
+                const cooldown = 24 * 60 * 60 * 1000;
+                if (now - gameState.lastFreeSpin >= cooldown) {
+                    gameState.lastFreeSpin = now;
+                    spinWheel(true);
+                    elements.freeSpinBtn.disabled = true;
+                    saveGame();
+                }
+            });
         }
 
-        // ========== СОХРАНЕНИЕ И ЗАГРУЗКА ==========
+        // ========== СОХРАНЕНИЕ ==========
         function saveGame() {
-            localStorage.setItem('bogdanGame_v2', JSON.stringify(gameState));
+            const saveData = {
+                ...gameState,
+                achievements: ACHIEVEMENTS_DATA,
+                lastSave: Date.now()
+            };
+            localStorage.setItem('bogdanGame_v3', JSON.stringify(saveData));
         }
 
         function loadGame() {
-            const saved = localStorage.getItem('bogdanGame_v2');
+            const saved = localStorage.getItem('bogdanGame_v3');
             if (saved) {
-                const loaded = JSON.parse(saved);
-                Object.assign(gameState, loaded);
-                gameState.startTime = loaded.startTime || Date.now();
-                gameState.lastClickTime = Date.now();
+                try {
+                    const loaded = JSON.parse(saved);
+                    
+                    // Восстанавливаем основные данные
+                    gameState.totalScore = loaded.totalScore || 0;
+                    gameState.availablePoints = loaded.availablePoints || 0;
+                    gameState.crystals = loaded.crystals || 0;
+                    gameState.totalCrystalsEarned = loaded.totalCrystalsEarned || 0;
+                    gameState.multiplier = loaded.multiplier || 1.0;
+                    gameState.autoLevel = loaded.autoLevel || 1;
+                    gameState.multiLevel = loaded.multiLevel || 1;
+                    gameState.doubleLevel = loaded.doubleLevel || 1;
+                    gameState.doubleChance = loaded.doubleChance || 0.2;
+                    gameState.startTime = loaded.startTime || Date.now();
+                    gameState.lastClickTime = Date.now();
+                    gameState.lastFreeSpin = loaded.lastFreeSpin || 0;
+                    gameState.activeBoosts = loaded.activeBoosts || [];
+                    
+                    // Восстанавливаем достижения
+                    if (loaded.achievements) {
+                        loaded.achievements.forEach(savedAch => {
+                            const ach = ACHIEVEMENTS_DATA.find(a => a.id === savedAch.id);
+                            if (ach) ach.progress = savedAch.progress || 0;
+                        });
+                    }
+                } catch (e) {
+                    console.log('Ошибка загрузки сохранения:', e);
+                }
             }
         }
 
@@ -838,14 +1392,14 @@
 
         function copyLink() {
             navigator.clipboard.writeText(window.location.href)
-                .then(() => alert('✅ Ссылка скопирована! Отправьте другу.'));
+                .then(() => showNotification('✅ Ссылка скопирована!', '#78e08f'));
         }
 
         function shareGame() {
             if (navigator.share) {
                 navigator.share({
                     title: 'Кнопочка Богдана',
-                    text: 'Играй в крутую онлайн игру!',
+                    text: 'Играй в крутую онлайн игру с колесом фортуны и достижениями!',
                     url: window.location.href
                 });
             } else {
@@ -858,18 +1412,8 @@
             elements.playerCount.textContent = `Сейчас играют: ${fakeCount} человек`;
         }
 
-        // ========== ЗАПУСК ИГРЫ ==========
+        // ========== ЗАПУСК ==========
         window.addEventListener('load', initGame);
-        
-        // Добавляем стиль для плавающего текста
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes floatUp {
-                0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-                100% { transform: translate(-50%, -150%) scale(1.5); opacity: 0; }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
 </body>
-</html>
+                </html>
