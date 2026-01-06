@@ -32,6 +32,232 @@
             overflow-x: hidden;
         }
 
+        /* Кнопка настроек в углу */
+        .settings-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #f6b93b;
+            border-radius: 50%;
+            color: #f6b93b;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .settings-button:hover {
+            transform: rotate(30deg);
+            background: rgba(246, 185, 59, 0.2);
+        }
+
+        /* Модальное окно настроек */
+        .settings-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .settings-modal.active {
+            display: flex;
+        }
+
+        .settings-content {
+            background: linear-gradient(135deg, #1e3799, #0c2461);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 30px;
+            border: 3px solid #f6b93b;
+            box-shadow: 0 0 40px rgba(246, 185, 59, 0.5);
+            position: relative;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .settings-title {
+            font-size: 2rem;
+            color: #f6b93b;
+            text-shadow: 0 0 10px #f6b93b;
+        }
+
+        .close-settings {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .close-settings:hover {
+            transform: scale(1.2);
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .settings-section:last-child {
+            border-bottom: none;
+        }
+
+        .settings-section-title {
+            font-size: 1.3rem;
+            color: #82ccdd;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+
+        .settings-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .option-label {
+            font-size: 1.1rem;
+            color: #fff;
+        }
+
+        .option-description {
+            font-size: 0.9rem;
+            color: #82ccdd;
+            margin-top: 5px;
+        }
+
+        /* Переключатели */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a69bd;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #78e08f;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Ползунки громкости */
+        .volume-slider {
+            width: 150px;
+            height: 8px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #4a69bd;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f6b93b;
+            cursor: pointer;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f6b93b;
+            cursor: pointer;
+            border: none;
+        }
+
+        /* Кнопки сброса */
+        .reset-button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 10px;
+            background: linear-gradient(45deg, #e55039, #b71540);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reset-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 80, 57, 0.4);
+        }
+
+        .reset-button.confirm {
+            background: linear-gradient(45deg, #78e08f, #38ada9);
+        }
+
         /* Шапка сайта */
         .site-header {
             width: 100%;
@@ -518,6 +744,7 @@
             .stats-grid { grid-template-columns: 1fr; }
             .nav-btn { min-width: 120px; padding: 10px; }
             .wheel { width: 250px; height: 250px; }
+            .settings-button { top: 10px; left: 10px; width: 40px; height: 40px; font-size: 1.2rem; }
         }
 
         /* Анимация тапа */
@@ -539,6 +766,196 @@
     </style>
 </head>
 <body>
+    <!-- Кнопка настроек -->
+    <div class="settings-button" id="settingsButton">
+        ⚙️
+    </div>
+
+    <!-- Модальное окно настроек -->
+    <div class="settings-modal" id="settingsModal">
+        <div class="settings-content">
+            <div class="settings-header">
+                <h2 class="settings-title">⚙️ Настройки</h2>
+                <button class="close-settings" id="closeSettings">×</button>
+            </div>
+
+            <!-- Звуки -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">🔊 Звуки</h3>
+                
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Общий звук</div>
+                        <div class="option-description">Включить/выключить все звуки</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="soundEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Громкость звуков тапа</div>
+                        <div class="option-description">Громкость кликов по Богдану</div>
+                    </div>
+                    <input type="range" class="volume-slider" id="tapVolume" min="0" max="100" value="80">
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Звуки покупки</div>
+                        <div class="option-description">Звуки при покупке улучшений</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="buySoundsEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Звуки достижений</div>
+                        <div class="option-description">Звуки при получении достижений</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="achievementSoundsEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Звуки колеса</div>
+                        <div class="option-description">Звуки вращения колеса фортуны</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="wheelSoundsEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Графика -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">🎨 Графика</h3>
+                
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Эффекты тапа</div>
+                        <div class="option-description">Анимации при нажатии на кнопку</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="tapEffectsEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Уведомления</div>
+                        <div class="option-description">Всплывающие уведомления</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="notificationsEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Анимации колеса</div>
+                        <div class="option-description">Анимация вращения колеса</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="wheelAnimationsEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Тёмная тема</div>
+                        <div class="option-description">Переключение на тёмный режим</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="darkThemeEnabled">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Игровые настройки -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">🎮 Игровой процесс</h3>
+                
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Автосохранение</div>
+                        <div class="option-description">Автоматическое сохранение прогресса</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="autosaveEnabled" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Вибрация</div>
+                        <div class="option-description">Вибрация при тапе (на мобильных)</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="vibrationEnabled">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-option">
+                    <div>
+                        <div class="option-label">Подтверждение покупок</div>
+                        <div class="option-description">Запрос подтверждения при покупке</div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="confirmPurchasesEnabled">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Сброс и управление -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">🔄 Управление данными</h3>
+                
+                <button class="reset-button" id="exportSave">
+                    📥 Экспорт сохранения
+                </button>
+                
+                <button class="reset-button" id="importSave">
+                    📤 Импорт сохранения
+                </button>
+                
+                <button class="reset-button" id="resetGame">
+                    🗑️ Сбросить игру
+                </button>
+
+                <button class="reset-button confirm" id="confirmReset" style="display: none;">
+                    ✅ Подтвердить сброс
+                </button>
+            </div>
+
+            <!-- Информация -->
+            <div class="settings-section">
+                <h3 class="settings-section-title">ℹ️ Информация</h3>
+                <div style="color: #82ccdd; font-size: 0.9rem; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                    <p>Версия игры: 2.0</p>
+                    <p>Сохранение: <span id="saveInfo">Локальное</span></p>
+                    <p>Последнее сохранение: <span id="lastSaveTime">Только что</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Кристаллы -->
     <div class="crystals-display">
         💎 Кристаллы: <span id="crystalsCount">0</span>
@@ -707,7 +1124,7 @@
         <!-- Вкладка ОБ ИГРЕ -->
         <section id="about" class="game-tab">
             <div class="about-content">
-                <h3>🎮 Добро пожаловать в "Кнопочку Богдана"!</h3>
+                <h3>🎮 Добро пожаловать в "Кнопочка Богдана"!</h3>
                 <p>Это бесплатная онлайн игра, в которую можно играть прямо в браузере. Не нужно ничего скачивать или устанавливать!</p>
                 
                 <h3>📱 Как играть?</h3>
@@ -725,6 +1142,7 @@
                     <li>💎 Кристаллы за выполнение заданий</li>
                     <li>🔊 Звуковые эффекты</li>
                     <li>⚡ Временные бусты и множители</li>
+                    <li>⚙️ Настройки звука и графики</li>
                 </ul>
                 
                 <h3>🔗 Поделитесь с друзьями!</h3>
@@ -754,6 +1172,23 @@
     <audio id="buySound" preload="auto"></audio>
 
     <script>
+        // ========== НАСТРОЙКИ ==========
+        let settings = {
+            soundEnabled: true,
+            tapVolume: 80,
+            buySoundsEnabled: true,
+            achievementSoundsEnabled: true,
+            wheelSoundsEnabled: true,
+            tapEffectsEnabled: true,
+            notificationsEnabled: true,
+            wheelAnimationsEnabled: true,
+            darkThemeEnabled: false,
+            autosaveEnabled: true,
+            vibrationEnabled: false,
+            confirmPurchasesEnabled: false,
+            lastSaveTime: Date.now()
+        };
+
         // ========== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ==========
         let gameState = {
             totalScore: 0,
@@ -800,6 +1235,36 @@
 
         // ========== DOM ЭЛЕМЕНТЫ ==========
         const elements = {
+            // Настройки
+            settingsButton: document.getElementById('settingsButton'),
+            settingsModal: document.getElementById('settingsModal'),
+            closeSettings: document.getElementById('closeSettings'),
+            
+            // Переключатели настроек
+            soundEnabled: document.getElementById('soundEnabled'),
+            tapVolume: document.getElementById('tapVolume'),
+            buySoundsEnabled: document.getElementById('buySoundsEnabled'),
+            achievementSoundsEnabled: document.getElementById('achievementSoundsEnabled'),
+            wheelSoundsEnabled: document.getElementById('wheelSoundsEnabled'),
+            tapEffectsEnabled: document.getElementById('tapEffectsEnabled'),
+            notificationsEnabled: document.getElementById('notificationsEnabled'),
+            wheelAnimationsEnabled: document.getElementById('wheelAnimationsEnabled'),
+            darkThemeEnabled: document.getElementById('darkThemeEnabled'),
+            autosaveEnabled: document.getElementById('autosaveEnabled'),
+            vibrationEnabled: document.getElementById('vibrationEnabled'),
+            confirmPurchasesEnabled: document.getElementById('confirmPurchasesEnabled'),
+            
+            // Кнопки управления
+            exportSave: document.getElementById('exportSave'),
+            importSave: document.getElementById('importSave'),
+            resetGame: document.getElementById('resetGame'),
+            confirmReset: document.getElementById('confirmReset'),
+            
+            // Информация
+            saveInfo: document.getElementById('saveInfo'),
+            lastSaveTime: document.getElementById('lastSaveTime'),
+            
+            // Игра
             totalScore: document.getElementById('totalScore'),
             multiplierDisplay: document.getElementById('multiplierDisplay'),
             clicksPerSec: document.getElementById('clicksPerSec'),
@@ -830,15 +1295,12 @@
             spinButton: document.getElementById('spinButton'),
             freeSpinBtn: document.getElementById('freeSpinBtn'),
             spinTimer: document.getElementById('spinTimer'),
-            achievementsList: document.getElementById('achievementsList'),
-            tapSound: document.getElementById('tapSound'),
-            spinSound: document.getElementById('spinSound'),
-            achievementSound: document.getElementById('achievementSound'),
-            buySound: document.getElementById('buySound')
+            achievementsList: document.getElementById('achievementsList')
         };
 
         // ========== ИНИЦИАЛИЗАЦИЯ ==========
         function initGame() {
+            loadSettings();
             loadGame();
             initSounds();
             setupEventListeners();
@@ -848,23 +1310,88 @@
             updateGameLink();
             updateUI();
             startBoostChecker();
+            updateSettingsDisplay();
             
             // Обновление UI
             setInterval(updateUI, 100);
             setInterval(updateSpinTimer, 1000);
-            setInterval(saveGame, 30000);
+            if (settings.autosaveEnabled) {
+                setInterval(saveGame, 30000);
+            }
             setInterval(updatePlayerCount, 5000);
             
             console.log('🚀 Игра "Кнопочка Богдана" запущена!');
         }
 
+        // ========== НАСТРОЙКИ ==========
+        function loadSettings() {
+            const saved = localStorage.getItem('bogdanSettings');
+            if (saved) {
+                try {
+                    const loaded = JSON.parse(saved);
+                    Object.assign(settings, loaded);
+                } catch (e) {
+                    console.log('Ошибка загрузки настроек:', e);
+                }
+            }
+        }
+
+        function saveSettings() {
+            localStorage.setItem('bogdanSettings', JSON.stringify(settings));
+        }
+
+        function updateSettingsDisplay() {
+            // Устанавливаем значения переключателей
+            elements.soundEnabled.checked = settings.soundEnabled;
+            elements.tapVolume.value = settings.tapVolume;
+            elements.buySoundsEnabled.checked = settings.buySoundsEnabled;
+            elements.achievementSoundsEnabled.checked = settings.achievementSoundsEnabled;
+            elements.wheelSoundsEnabled.checked = settings.wheelSoundsEnabled;
+            elements.tapEffectsEnabled.checked = settings.tapEffectsEnabled;
+            elements.notificationsEnabled.checked = settings.notificationsEnabled;
+            elements.wheelAnimationsEnabled.checked = settings.wheelAnimationsEnabled;
+            elements.darkThemeEnabled.checked = settings.darkThemeEnabled;
+            elements.autosaveEnabled.checked = settings.autosaveEnabled;
+            elements.vibrationEnabled.checked = settings.vibrationEnabled;
+            elements.confirmPurchasesEnabled.checked = settings.confirmPurchasesEnabled;
+            
+            // Обновляем информацию
+            const now = new Date();
+            const timeDiff = Math.floor((now - new Date(settings.lastSaveTime)) / 1000);
+            let timeText = 'Только что';
+            
+            if (timeDiff > 60) {
+                const minutes = Math.floor(timeDiff / 60);
+                timeText = `${minutes} минут назад`;
+            }
+            
+            elements.lastSaveTime.textContent = timeText;
+            
+            // Применяем тему
+            applyTheme();
+        }
+
+        function applyTheme() {
+            if (settings.darkThemeEnabled) {
+                document.body.style.background = 'linear-gradient(135deg, #0a0a0a, #1a1a1a)';
+            } else {
+                document.body.style.background = 'linear-gradient(135deg, #0c2461, #1e3799, #4a69bd)';
+            }
+        }
+
         // ========== ЗВУКИ ==========
         function initSounds() {
-            // Создаем простые звуки с помощью Web Audio API
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            if (!window.AudioContext && !window.webkitAudioContext) {
+                console.log('Web Audio API не поддерживается');
+                return;
+            }
+        }
+
+        function playTapSound() {
+            if (!settings.soundEnabled || !settings.buySoundsEnabled) return;
             
-            // Звук тапа
-            function createTapSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 
@@ -874,23 +1401,30 @@
                 oscillator.frequency.value = 800;
                 oscillator.type = 'sine';
                 
-                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                const volume = settings.tapVolume / 100 * 0.3;
+                gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
                 
                 oscillator.start();
                 oscillator.stop(audioContext.currentTime + 0.1);
+            } catch (e) {
+                console.log('Ошибка воспроизведения звука:', e);
             }
+        }
+
+        function playBuySound() {
+            if (!settings.soundEnabled || !settings.buySoundsEnabled) return;
             
-            // Звук покупки
-            function createBuySound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
                 
-                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
-                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1);
                 oscillator.type = 'sine';
                 
                 gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
@@ -898,19 +1432,25 @@
                 
                 oscillator.start();
                 oscillator.stop(audioContext.currentTime + 0.2);
+            } catch (e) {
+                console.log('Ошибка воспроизведения звука:', e);
             }
+        }
+
+        function playAchievementSound() {
+            if (!settings.soundEnabled || !settings.achievementSoundsEnabled) return;
             
-            // Звук достижения
-            function createAchievementSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioContext.createOscillator();
                 const gainNode = audioContext.createGain();
                 
                 oscillator.connect(gainNode);
                 gainNode.connect(audioContext.destination);
                 
-                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime); // E5
-                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.1); // G5
-                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.2); // C6
+                oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(1046.50, audioContext.currentTime + 0.2);
                 oscillator.type = 'triangle';
                 
                 gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
@@ -918,12 +1458,9 @@
                 
                 oscillator.start();
                 oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (e) {
+                console.log('Ошибка воспроизведения звука:', e);
             }
-            
-            // Привязываем звуки к глобальным функциям
-            window.playTapSound = createTapSound;
-            window.playBuySound = createBuySound;
-            window.playAchievementSound = createAchievementSound;
         }
 
         // ========== ОСНОВНАЯ ЛОГИКА ==========
@@ -936,7 +1473,9 @@
             if (Math.random() * 100 < gameState.doubleChance) {
                 points *= 2;
                 isCritical = true;
-                showNotification('🎯 КРИТИЧЕСКИЙ УДАР! x2', '#f6b93b');
+                if (settings.notificationsEnabled) {
+                    showNotification('🎯 КРИТИЧЕСКИЙ УДАР! x2', '#f6b93b');
+                }
             }
             
             // Применяем активные бусты
@@ -956,10 +1495,19 @@
             
             updateUI();
             saveGame();
-            createTapAnimation(event);
             
-            // Воспроизводим звук
-            if (window.playTapSound) window.playTapSound();
+            // Эффекты
+            if (settings.tapEffectsEnabled) {
+                createTapAnimation(event);
+            }
+            
+            // Звук
+            playTapSound();
+            
+            // Вибрация (если поддерживается)
+            if (settings.vibrationEnabled && navigator.vibrate) {
+                navigator.vibrate(50);
+            }
         }
 
         function calculateUpgradeCost(baseCost, level, multiplier = 1.15) {
@@ -976,6 +1524,13 @@
         }
 
         function buyUpgrade(type) {
+            // Проверка подтверждения
+            if (settings.confirmPurchasesEnabled) {
+                if (!confirm(`Вы уверены, что хотите купить это улучшение?`)) {
+                    return;
+                }
+            }
+            
             let cost = 0;
             let success = false;
             
@@ -1017,7 +1572,10 @@
             if (success) {
                 updateUI();
                 saveGame();
-                if (window.playBuySound) window.playBuySound();
+                playBuySound();
+                if (settings.notificationsEnabled) {
+                    showNotification('✅ Улучшение куплено!', '#78e08f');
+                }
             }
         }
 
@@ -1061,7 +1619,9 @@
             const spinCost = 10;
             
             if (!isFree && gameState.crystals < spinCost) {
-                showNotification('❌ Недостаточно кристаллов!', '#e55039');
+                if (settings.notificationsEnabled) {
+                    showNotification('❌ Недостаточно кристаллов!', '#e55039');
+                }
                 return;
             }
             
@@ -1079,10 +1639,12 @@
             // Вращение
             const spins = 5 + Math.floor(Math.random() * 3);
             const totalDegrees = spins * 360 + Math.floor(Math.random() * 360);
-            const duration = 3000 + spins * 500;
+            const duration = settings.wheelAnimationsEnabled ? (3000 + spins * 500) : 100;
             
-            elements.fortuneWheel.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.3, 0.2, 1)`;
-            elements.fortuneWheel.style.transform = `rotate(${totalDegrees}deg)`;
+            if (settings.wheelAnimationsEnabled) {
+                elements.fortuneWheel.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.3, 0.2, 1)`;
+                elements.fortuneWheel.style.transform = `rotate(${totalDegrees}deg)`;
+            }
             
             // Определяем выигрыш
             setTimeout(() => {
@@ -1095,18 +1657,23 @@
                 awardPrize(prize);
                 
                 // Сбрасываем вращение
-                setTimeout(() => {
-                    elements.fortuneWheel.style.transition = 'none';
-                    elements.fortuneWheel.style.transform = 'rotate(0deg)';
+                if (settings.wheelAnimationsEnabled) {
+                    setTimeout(() => {
+                        elements.fortuneWheel.style.transition = 'none';
+                        elements.fortuneWheel.style.transform = 'rotate(0deg)';
+                        spinButton.style.pointerEvents = 'auto';
+                        spinButton.textContent = isFree ? '🎁 БЕСПЛАТНО' : 'КРУТИТЬ\n💎10';
+                        
+                        setTimeout(() => {
+                            elements.fortuneWheel.style.transition = 'transform 0.5s';
+                        }, 50);
+                    }, 1000);
+                } else {
                     spinButton.style.pointerEvents = 'auto';
                     spinButton.textContent = isFree ? '🎁 БЕСПЛАТНО' : 'КРУТИТЬ\n💎10';
-                    
-                    setTimeout(() => {
-                        elements.fortuneWheel.style.transition = 'transform 0.5s';
-                    }, 50);
-                }, 1000);
+                }
                 
-            }, duration);
+            }, settings.wheelAnimationsEnabled ? duration : 100);
             
             updateUI();
             saveGame();
@@ -1135,7 +1702,9 @@
                     break;
             }
             
-            showNotification(message, prize.color);
+            if (settings.notificationsEnabled) {
+                showNotification(message, prize.color);
+            }
             updateAchievementProgress(7, gameState.totalCrystalsEarned);
         }
 
@@ -1148,7 +1717,9 @@
             };
             
             gameState.activeBoosts.push(boost);
-            showNotification(`⚡ Активирован буст: ${type === 'multiplier' ? 'x' + value + ' множитель' : 'x' + value + ' авто-тап'}`, '#78e08f');
+            if (settings.notificationsEnabled) {
+                showNotification(`⚡ Активирован буст: ${type === 'multiplier' ? 'x' + value + ' множитель' : 'x' + value + ' авто-тап'}`, '#78e08f');
+            }
         }
 
         function checkBoosts() {
@@ -1194,9 +1765,13 @@
                 // Достижение получено!
                 gameState.crystals += ach.reward;
                 gameState.totalCrystalsEarned += ach.reward;
-                showNotification(`🏆 Достижение получено: ${ach.name}! +${ach.reward}💎`, '#f6b93b');
+                
+                if (settings.notificationsEnabled) {
+                    showNotification(`🏆 Достижение получено: ${ach.name}! +${ach.reward}💎`, '#f6b93b');
+                }
+                
                 createAchievements();
-                if (window.playAchievementSound) window.playAchievementSound();
+                playAchievementSound();
             }
         }
 
@@ -1280,6 +1855,8 @@
 
         // ========== УВЕДОМЛЕНИЯ ==========
         function showNotification(text, color) {
+            if (!settings.notificationsEnabled) return;
+            
             const notification = document.createElement('div');
             notification.className = 'notification';
             notification.textContent = text;
@@ -1290,6 +1867,8 @@
         }
 
         function createTapAnimation(event) {
+            if (!settings.tapEffectsEnabled) return;
+            
             const x = event.clientX || event.touches[0].clientX;
             const y = event.clientY || event.touches[0].clientY;
             
@@ -1304,6 +1883,94 @@
 
         // ========== СОБЫТИЯ ==========
         function setupEventListeners() {
+            // Настройки
+            elements.settingsButton.addEventListener('click', () => {
+                elements.settingsModal.classList.add('active');
+            });
+            
+            elements.closeSettings.addEventListener('click', () => {
+                elements.settingsModal.classList.remove('active');
+            });
+            
+            // Закрытие настроек по клику вне окна
+            elements.settingsModal.addEventListener('click', (e) => {
+                if (e.target === elements.settingsModal) {
+                    elements.settingsModal.classList.remove('active');
+                }
+            });
+            
+            // Обновление настроек
+            elements.soundEnabled.addEventListener('change', (e) => {
+                settings.soundEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.tapVolume.addEventListener('input', (e) => {
+                settings.tapVolume = e.target.value;
+                saveSettings();
+            });
+            
+            elements.buySoundsEnabled.addEventListener('change', (e) => {
+                settings.buySoundsEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.achievementSoundsEnabled.addEventListener('change', (e) => {
+                settings.achievementSoundsEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.wheelSoundsEnabled.addEventListener('change', (e) => {
+                settings.wheelSoundsEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.tapEffectsEnabled.addEventListener('change', (e) => {
+                settings.tapEffectsEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.notificationsEnabled.addEventListener('change', (e) => {
+                settings.notificationsEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.wheelAnimationsEnabled.addEventListener('change', (e) => {
+                settings.wheelAnimationsEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.darkThemeEnabled.addEventListener('change', (e) => {
+                settings.darkThemeEnabled = e.target.checked;
+                saveSettings();
+                applyTheme();
+            });
+            
+            elements.autosaveEnabled.addEventListener('change', (e) => {
+                settings.autosaveEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.vibrationEnabled.addEventListener('change', (e) => {
+                settings.vibrationEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            elements.confirmPurchasesEnabled.addEventListener('change', (e) => {
+                settings.confirmPurchasesEnabled = e.target.checked;
+                saveSettings();
+            });
+            
+            // Управление сохранениями
+            elements.exportSave.addEventListener('click', exportSave);
+            elements.importSave.addEventListener('click', importSave);
+            elements.resetGame.addEventListener('click', () => {
+                elements.resetGame.style.display = 'none';
+                elements.confirmReset.style.display = 'block';
+            });
+            
+            elements.confirmReset.addEventListener('click', resetGame);
+            
             // Навигация
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -1343,8 +2010,13 @@
 
         // ========== СОХРАНЕНИЕ ==========
         function saveGame() {
+            if (!settings.autosaveEnabled) return;
+            
+            settings.lastSaveTime = Date.now();
+            saveSettings();
+            
             const saveData = {
-                ...gameState,
+                gameState: gameState,
                 achievements: ACHIEVEMENTS_DATA,
                 lastSave: Date.now()
             };
@@ -1358,19 +2030,19 @@
                     const loaded = JSON.parse(saved);
                     
                     // Восстанавливаем основные данные
-                    gameState.totalScore = loaded.totalScore || 0;
-                    gameState.availablePoints = loaded.availablePoints || 0;
-                    gameState.crystals = loaded.crystals || 0;
-                    gameState.totalCrystalsEarned = loaded.totalCrystalsEarned || 0;
-                    gameState.multiplier = loaded.multiplier || 1.0;
-                    gameState.autoLevel = loaded.autoLevel || 1;
-                    gameState.multiLevel = loaded.multiLevel || 1;
-                    gameState.doubleLevel = loaded.doubleLevel || 1;
-                    gameState.doubleChance = loaded.doubleChance || 0.2;
-                    gameState.startTime = loaded.startTime || Date.now();
+                    gameState.totalScore = loaded.gameState?.totalScore || 0;
+                    gameState.availablePoints = loaded.gameState?.availablePoints || 0;
+                    gameState.crystals = loaded.gameState?.crystals || 0;
+                    gameState.totalCrystalsEarned = loaded.gameState?.totalCrystalsEarned || 0;
+                    gameState.multiplier = loaded.gameState?.multiplier || 1.0;
+                    gameState.autoLevel = loaded.gameState?.autoLevel || 1;
+                    gameState.multiLevel = loaded.gameState?.multiLevel || 1;
+                    gameState.doubleLevel = loaded.gameState?.doubleLevel || 1;
+                    gameState.doubleChance = loaded.gameState?.doubleChance || 0.2;
+                    gameState.startTime = loaded.gameState?.startTime || Date.now();
                     gameState.lastClickTime = Date.now();
-                    gameState.lastFreeSpin = loaded.lastFreeSpin || 0;
-                    gameState.activeBoosts = loaded.activeBoosts || [];
+                    gameState.lastFreeSpin = loaded.gameState?.lastFreeSpin || 0;
+                    gameState.activeBoosts = loaded.gameState?.activeBoosts || [];
                     
                     // Восстанавливаем достижения
                     if (loaded.achievements) {
@@ -1382,6 +2054,121 @@
                 } catch (e) {
                     console.log('Ошибка загрузки сохранения:', e);
                 }
+            }
+        }
+
+        function exportSave() {
+            const saveData = {
+                gameState: gameState,
+                achievements: ACHIEVEMENTS_DATA,
+                settings: settings,
+                version: '2.0',
+                exportDate: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(saveData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `bogdan_save_${Date.now()}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('✅ Сохранение экспортировано!', '#78e08f');
+        }
+
+        function importSave() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = event => {
+                    try {
+                        const imported = JSON.parse(event.target.result);
+                        
+                        // Проверяем версию
+                        if (imported.version !== '2.0') {
+                            showNotification('❌ Несовместимая версия сохранения!', '#e55039');
+                            return;
+                        }
+                        
+                        // Загружаем данные
+                        if (confirm('Вы уверены, что хотите заменить текущее сохранение? Все несохраненные данные будут потеряны.')) {
+                            if (imported.gameState) Object.assign(gameState, imported.gameState);
+                            if (imported.achievements) {
+                                imported.achievements.forEach(savedAch => {
+                                    const ach = ACHIEVEMENTS_DATA.find(a => a.id === savedAch.id);
+                                    if (ach) ach.progress = savedAch.progress || 0;
+                                });
+                            }
+                            if (imported.settings) Object.assign(settings, imported.settings);
+                            
+                            updateSettingsDisplay();
+                            updateUI();
+                            saveGame();
+                            saveSettings();
+                            
+                            showNotification('✅ Сохранение импортировано!', '#78e08f');
+                        }
+                    } catch (error) {
+                        showNotification('❌ Ошибка загрузки файла!', '#e55039');
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function resetGame() {
+            if (confirm('ВЫ УВЕРЕНЫ? Это удалит весь ваш прогресс, достижения и кристаллы! Действие нельзя отменить.')) {
+                // Сбрасываем игровые данные
+                gameState = {
+                    totalScore: 0,
+                    availablePoints: 0,
+                    crystals: 0,
+                    totalCrystalsEarned: 0,
+                    multiplier: 1.0,
+                    autoLevel: 1,
+                    multiLevel: 1,
+                    doubleLevel: 1,
+                    doubleChance: 0.2,
+                    startTime: Date.now(),
+                    lastClickTime: Date.now(),
+                    clicksThisSecond: 0,
+                    autoClickerInterval: null,
+                    activeBoosts: [],
+                    achievements: [],
+                    lastFreeSpin: 0
+                };
+                
+                // Сбрасываем достижения
+                ACHIEVEMENTS_DATA.forEach(ach => {
+                    ach.progress = 0;
+                });
+                
+                // Удаляем сохранения
+                localStorage.removeItem('bogdanGame_v3');
+                
+                // Перезапускаем игру
+                setupAutoClicker();
+                createAchievements();
+                updateUI();
+                
+                elements.resetGame.style.display = 'block';
+                elements.confirmReset.style.display = 'none';
+                
+                showNotification('🎮 Игра сброшена! Начните заново!', '#f6b93b');
+            } else {
+                elements.resetGame.style.display = 'block';
+                elements.confirmReset.style.display = 'none';
             }
         }
 
